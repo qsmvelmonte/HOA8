@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install update and repositories (CentOS)
+    tags: always
+    yum:
+     # name: "*"
+      update_cache: yes
+      state: latest
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: install update and repositories (Ubuntu)
+    tags: always
+    apt:
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  roles:
+    - base
+
+- hosts: remote_servers
+  become: true
+  roles:
+    - remote_servers_ubuntu
+    - remote_servers_centos
